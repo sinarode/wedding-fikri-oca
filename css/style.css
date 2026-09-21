@@ -1,0 +1,863 @@
+
+        /* Efek Fade Out saat loading selesai */
+    .loader-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Mengunci scroll saat loading berlangsung agar user tidak scroll duluan */
+    body.loading-active {
+        overflow: hidden;
+    }
+
+    /* Animasi Spin yang halus */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+        :root {
+            --primary: #8e735b;
+            --secondary: #f4f1ee;
+            --dark: #2d241d;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 1. Background Luar */
+        html {
+            background: url('../assets/IMG_6099.JPG.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Mencegah geser kanan-kiri */
+        }
+
+        /* 2. Logika Body */
+        body {
+            background-color: var(--secondary);
+            box-shadow: -10px 0 50px rgba(0,0,0,0.5);
+            position: relative;
+            min-height: 100vh;
+            margin: 0; /* Reset margin default */
+            padding: 0;
+        }
+
+        /* 3. SETTING KHUSUS LAYAR LEBAR (LAPTOP/TABLET) */
+        @media (min-width: 501px) {
+            body {
+                max-width: 500px !important;
+                margin-left: auto !important; 
+                margin-right: 0 !important;
+                display: block !important;
+            }
+        }
+
+        /* 4. SETTING KHUSUS HP (Full Layar) */
+        @media (max-width: 500px) {
+            body {
+                max-width: 100% !important; /* Paksa 100% di HP */
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-shadow: none; /* Hilangkan bayangan di HP agar lebih ringan */
+            }
+        }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-accent { font-family: 'Great Vibes', cursive; }
+
+        /* Performance Boost */
+        img { will-change: transform; }
+
+        /* Style untuk Cover Luar */
+              #wedding-cover {
+            position: fixed;
+            top: 0;
+            right: 0 !important; /* Paksa nempel kanan layar */
+            left: auto !important; 
+            width: 100% !important;
+            max-width: 500px !important;
+            height: 100%;
+            z-index: 9999;
+            transition: transform 1s ease-in-out;
+        }
+
+        /* Pastikan section halaman 2 benar-benar pas layar HP */
+        .section-full {
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Ukuran dinamis mengikuti layar HP asli */
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        .paused {
+            animation-play-state: paused !important;
+        }
+
+        #langMenu {
+        transition: all 0.3s ease;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .knot-section-fixed {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .knot-image-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Foto tidak akan gepeng */
+            object-position: center;
+        }
+
+        /* Styling Modal QR */
+        #qrModal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .qr-card {
+            background: #fdfbf7; /* Warna kertas cream */
+            width: 100%;
+            max-width: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 8px solid #4a5d4a; /* Frame Hijau sesuai tema footer */
+        }
+
+        .qr-header {
+            background: #4a5d4a;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .qr-body {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        #qrcode {
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        #qrcode img {
+            margin: 0 auto;
+            /* Membuat QR tetap tajam di layar HP low-res */
+            image-rendering: pixelated; 
+            image-rendering: crisp-edges;
+            border: 10px solid white; /* Memberi 'Quiet Zone' agar kamera fokus ke QR */
+        }
+
+        .qr-footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 10px;
+            color: #888;
+            border-top: 1px dashed #ccc;
+        }
+
+        .btn-qr-aesthetic {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15); /* Transparan Putih */
+            backdrop-filter: blur(10px); /* Efek Blur Kaca */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            text-transform: none;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-qr-aesthetic:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .btn-qr-aesthetic:active {
+            transform: scale(0.95);
+        }
+
+        /* Memastikan knot-text tidak tertutup tombol di layar kecil */
+        .knot-text {
+            position: absolute;
+            top: 50%; /* Letakkan di tengah dulu */
+            left: 50%;
+            transform: translate(-50%, -50%); /* Geser ke tengah sempurna */
+            width: 85%;
+            color: white;
+            font-size: 1.6rem;
+            font-family: 'Great Vibes', cursive;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            z-index: 10;
+            text-align: left;
+            margin-top: -20px; /* Sedikit ke atas agar tidak kena tombol */
+        }
+        /* 4. Perbaikan Tombol Musik */
+        #musicButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px !important;
+            z-index: 10000;
+        }
+
+        /* 5. Efek Buka Undangan */
+        .cover-opened {
+            transform: translateY(-100%) !important;
+        }
+
+        /* 6. Otomatis Tengah jika dibuka di HP */
+        @media (max-width: 500px) {
+            body {
+                margin: 0 auto !important;
+            }
+            #wedding-cover {
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%);
+            }
+            .cover-opened {
+                transform: translate(-50%, -100%) !important;
+            }
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            width: 100%;
+            height: 100%;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+        }
+
+        .btn-open {
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-family: 'serif';
+            font-weight: 600;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        .btn-open:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .cover-opened {
+            transform: translateY(-100%);
+        }
+
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .knot-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+
+        .knot-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        .knot-text {
+            position: absolute;
+            z-index: 20;
+            color: #ffffff;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            text-align: left;
+            width: 85%;
+            /* Letakkan di tengah layar secara vertikal */
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 2px 2px 12px rgba(0,0,0,0.9);
+            font-family: 'Great Vibes', cursive;
+            pointer-events: none; /* Supaya tidak menghalangi klik tombol */
+        }
+
+        /* Pastikan section pembungkusnya punya tinggi yang benar */
+        .section-full-screen {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            background: black;
+        }
+
+        .text-right-align {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .name-label {
+            position: absolute;
+            z-index: 20;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+            font-family: serif;
+            pointer-events: none;
+        }
+
+        .label-bride { top: 65%; left: 9%; font-size: 0.7rem; }
+        .label-groom { top: 60%; right: 5%; font-size: 0.75rem; }
+
+        .parent-label {
+            position: absolute;
+            z-index: 20;
+            font-family: serif;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .label-parents-bride {
+            top: 43%;
+            left: 19.8%;
+            text-align: left;
+            max-width: 60%;
+            color: #3d342d; 
+            transform: rotate(30deg);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .label-parents-groom {
+            bottom: 28%;
+            right: 4%;
+            text-align: right;
+            max-width: 45%;
+            color: #fcfaf7;
+            transform: rotate(-4deg);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+        }
+        
+        .timer-box-trans {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 65px;
+        }
+        
+        .timer-box {
+            background: white;
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 65px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .bg-portrait {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .glass-title {
+            padding: 10px 20px;
+            color: white !important;
+        }
+
+        .swiper-main {
+            width: 100%;
+            max-height: 70vh;
+            aspect-ratio: 4 / 5;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: aspect-ratio 0.45s ease;
+            margin: 0 auto;
+        }
+
+        .swiper-main.is-landscape {
+            aspect-ratio: 4 / 3;
+        }
+
+        .swiper-main.is-portrait {
+            aspect-ratio: 3 / 4;
+        }
+        
+        .swiper-thumbs {
+            margin-top: 12px;
+            height: 12vh;
+            box-sizing: border-box;
+            padding: 4px 0;
+        }
+        
+        .swiper-thumbs .swiper-slide {
+            width: 25%;
+            height: 100%;
+            opacity: 0.5;
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+        
+        .swiper-thumbs .swiper-slide-thumb-active {
+            opacity: 1;
+            border: 2px solid var(--primary);
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .swiper-main .swiper-slide img {
+            object-fit: contain;
+            background: #efece7;
+        }
+
+        .swiper-button-next, .swiper-button-prev {
+            color: white !important;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(4px);
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50%;
+        }
+        
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 18px !important;
+        }
+
+        .color-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .glass-dresscode {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .glass-gift-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            width: 85%;
+            max-width: 320px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .account-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-copy {
+            background: white;
+            color: #8e735b;
+            font-size: 9px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-copy:active { transform: scale(0.9); }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: transform 0.2s active;
+        }
+        
+        .btn-primary:active { transform: scale(0.95); }
+
+        section { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            padding: 3rem 1.2rem; 
+        }
+
+        .wishes-title-frame {
+            position: relative;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .line1, .line2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: white;
+            transform: rotate(-3deg) translateX(-15px);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .glass-wishes-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2.5rem;
+            padding: 2rem;
+            color: white;
+        }
+
+        .input-wishes-glass {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .input-wishes-glass::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .input-wishes-glass:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-send-glass {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-send-glass:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Aesthetic Scrollbar untuk WishBox --- */
+        #wishBox {
+            max-height: 400px; /* Batasi tinggi kotak ucapan */
+            overflow-y: auto;
+            padding-right: 8px; /* Ruang agar teks tidak mepet ke garis scroll */
+        }
+
+        /* Ukuran garis scroll (Sangat Tipis) */
+        #wishBox::-webkit-scrollbar {
+            width: 1px;
+        }
+
+        /* Jalur Scroll (Dibuat Transparan) */
+        #wishBox::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Batang Scroll (Garis Putih Tipis Khas Glassmorphism) */
+        #wishBox::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3); /* Putih transparan senada dengan kartu */
+            border-radius: 10px;
+        }
+
+        /* Efek saat disentuh */
+        #wishBox::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Solusi untuk Firefox */
+        #wishBox {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        /* --- Thank You Section (redesigned to match the site's glass theme) --- */
+        .section-thankyou {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .thankyou-overlay {
+            background: linear-gradient(180deg, rgba(20,17,14,0.55) 0%, rgba(20,17,14,0.72) 55%, rgb(12, 12, 12) 100%);
+        }
+
+        .thankyou-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: #f4f1ee;
+        }
+
+        .thankyou-ornament {
+            color: rgba(244, 241, 238, 0.75);
+            margin-bottom: 0.75rem;
+        }
+
+        .thankyou-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.6rem;
+            line-height: 1;
+            color: #ffffff;
+            text-shadow: 2px 2px 14px rgba(0,0,0,0.5);
+            margin-bottom: 0.25rem;
+        }
+
+        .thankyou-couple {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0.85;
+            margin-bottom: 1.5rem;
+        }
+
+        .thankyou-msg {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            line-height: 1.8;
+            font-weight: 300;
+            opacity: 0.9;
+            padding: 0 0.5rem;
+        }
+
+        .thankyou-divider {
+            width: 48px;
+            height: 1px;
+            background: rgba(244, 241, 238, 0.5);
+            margin-top: 1.75rem;
+        }
+
+        @media (max-width: 480px) {
+            .thankyou-title { font-size: 3.2rem; }
+        }
+
+        /* --- Footer & Sinar Ode Organizer Branding --- */
+        .wedding-footer {
+            background-color: var(--dark);
+            border: none;
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 0 auto 1.5rem;
+        }
+
+        .footer-organizer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-organizer-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            margin-bottom: 0.75rem;
+            filter: brightness(0) invert(1);
+            opacity: 0.95;
+        }
+
+        .footer-organizer-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.6rem;
+            color: #e9d9b8;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-social-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.25s ease;
+        }
+
+        .footer-social-btn:hover,
+        .footer-social-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .footer-organizer-copyright {
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            padding-top: 1rem;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        .paused {
+            animation-play-state: paused;
+        }
+    
