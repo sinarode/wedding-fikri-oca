@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sent Recap | Fikri & Oca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ⭐ Config terpusat: nama, tanggal, link API, background luar, dll -->
+    <script src="js/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            green: '#4a5d4a',
+                            light: '#f4f1ee',
+                            dark: '#1c1917',
+                            border: '#e0e2db'
+                        },
+                        gold: '#d4af37'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ee; color: #1c1917; -webkit-tap-highlight-color: transparent; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .custom-shadow { box-shadow: 0 10px 30px -5px rgba(74, 93, 74, 0.08); }
+        
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .row-item:active { background-color: rgba(74, 93, 74, 0.05); transform: scale(0.99); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #4a5d4a; border-radius: 10px; }
+
+        .badge-vip { background: linear-gradient(135deg, #d4af37 0%, #b8962d 100%); }
+        .badge-reg { background: #4a5d4a; }
+
+        input:focus { box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.05); }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen py-6 px-4 md:py-12">
+
+<div class="max-w-4xl mx-auto fade-in">
+    <!-- Header Section -->
+    <header class="flex flex-row justify-between items-center mb-8 gap-4">
+        <div class="text-left">
+            <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] text-stone-400 mb-1">Invitation Logs</p>
+            <h1 class="font-serif text-xl md:text-4xl text-stone-green font-bold leading-tight">Sent Recap</h1>
+        </div>
+        
+        <a href="generator.html" class="flex items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 md:px-8 py-3 md:py-4 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95 whitespace-nowrap">
+            <span class="text-xs">←</span> <span class="hidden md:inline">BACK TO </span>GENERATOR
+        </a>
+    </header>
+
+    <!-- Stats Card -->
+    <div class="glass-card rounded-[2rem] p-6 md:p-8 custom-shadow mb-6 flex items-center justify-between gap-6 border border-white">
+        <div class="flex items-center gap-4 md:gap-6">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-stone-green/10 rounded-full flex items-center justify-center text-2xl">
+                📨
+            </div>
+            <div>
+                <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Sent</p>
+                <h2 id="statTotal" class="text-3xl md:text-4xl font-serif text-stone-green font-bold leading-none">0</h2>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Status</p>
+            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
+                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                SYNCED
+            </span>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <div class="relative">
+            <input type="text" id="searchInput" oninput="filterData(this.value)" placeholder="Search guest name..." 
+                   class="w-full pl-12 pr-6 py-4 rounded-2xl bg-white border border-stone-border outline-none text-sm font-medium transition-all custom-shadow">
+            <div class="absolute left-5 top-1/2 -translate-y-1/2 text-stone-300">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Section -->
+    <div class="glass-card rounded-[2.5rem] overflow-hidden custom-shadow border border-white">
+        <div id="statusMessage" class="py-16 text-center">
+            <div class="inline-block w-8 h-8 border-3 border-stone-green/10 border-t-stone-green rounded-full animate-spin mb-4"></div>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Fetching records...</p>
+        </div>
+
+        <div id="tableWrapper" class="hidden">
+            <!-- Mobile View: Card Based (No Horizontal Scroll) -->
+            <div class="md:hidden divide-y divide-stone-border/50" id="mobileList">
+                <!-- Data injected via JS -->
+            </div>
+
+            <!-- Desktop View: Table -->
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-stone-light/50 border-b border-stone-border">
+                            <th class="py-6 px-8 text-[10px] font-bold text-stone-400 uppercase tracking-widest">No</th>
+                            <th class="py-6 px-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Guest Information</th>
+                            <th class="py-6 px-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">WhatsApp No</th>
+                            <th class="py-6 px-8 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapBody" class="divide-y divide-stone-border/50">
+                        <!-- Data injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-10 text-center pb-10">
+        <p class="text-[9px] font-bold text-stone-300 uppercase tracking-[0.4em]">#AIfinallyFAundlove</p>
+    </footer>
+</div>
+
+<script>
+    // ⭐ Diambil dari js/config.js (WEDDING_CONFIG.integrations.wishesApiUrl)
+    const scriptURL = WEDDING_CONFIG.integrations.wishesApiUrl;
+    let masterData = [];
+
+    async function loadRekap() {
+        const statusMessage = document.getElementById('statusMessage');
+        const tableWrapper = document.getElementById('tableWrapper');
+        const statTotal = document.getElementById('statTotal');
+
+        try {
+            const response = await fetch(`${scriptURL}?type=get_rekap_generator&v=${Date.now()}`);
+            if (!response.ok) throw new Error("Connection failed");
+            
+            let rawData = await response.json();
+            masterData = Array.isArray(rawData) ? rawData : (rawData.data || rawData.values || []);
+
+            masterData = masterData.filter((v, i, a) => 
+                v.nama && a.findIndex(t => t.nama.trim().toLowerCase() === v.nama.trim().toLowerCase()) === i
+            );
+
+            statTotal.innerText = masterData.length;
+
+            if (masterData.length === 0) {
+                statusMessage.innerHTML = `<p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest p-10">No invitations sent yet</p>`;
+                return;
+            }
+
+            statusMessage.style.display = 'none';
+            tableWrapper.classList.remove('hidden');
+            renderUI(masterData);
+
+        } catch (error) {
+            console.error('Error:', error);
+            statusMessage.innerHTML = `<div class="text-red-500 text-[10px] font-bold uppercase tracking-widest p-10">Error: ${error.message}</div>`;
+        }
+    }
+
+    function renderUI(data) {
+        const desktopBody = document.getElementById('rekapBody');
+        const mobileList = document.getElementById('mobileList');
+        
+        desktopBody.innerHTML = '';
+        mobileList.innerHTML = '';
+
+        data.forEach((item, index) => {
+            const isVip = (item.status || "").toUpperCase().includes('VIP');
+            const badgeClass = isVip ? 'badge-vip' : 'badge-reg';
+            const guestName = item.nama || "Anonymous";
+            const whatsapp = item.wa || '-';
+            const time = item.waktu || 'Recently';
+            const displayNo = data.length - index;
+
+            // Desktop Row
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-stone-50/50 transition-colors";
+            tr.innerHTML = `
+                <td class="py-6 px-8 text-xs font-bold text-stone-300 font-mono">#${displayNo}</td>
+                <td class="py-6 px-4">
+                    <div class="text-sm font-bold text-stone-dark uppercase tracking-tight">${guestName}</div>
+                    <div class="text-[9px] font-semibold text-stone-400 mt-1 uppercase tracking-wider">${time}</div>
+                </td>
+                <td class="py-6 px-4">
+                    <span class="text-[10px] text-stone-green font-mono font-bold bg-stone-light/50 px-2 py-1 rounded inline-block">${whatsapp}</span>
+                </td>
+                <td class="py-6 px-8 text-center">
+                    <span class="${badgeClass} px-4 py-1.5 rounded-full text-[8px] font-bold text-white uppercase tracking-[0.2em] shadow-sm whitespace-nowrap">
+                        ${item.status || 'REG'}
+                    </span>
+                </td>
+            `;
+            desktopBody.appendChild(tr);
+
+            // Mobile Card
+            const mobileDiv = document.createElement('div');
+            mobileDiv.className = "row-item p-6 transition-all";
+            mobileDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex-1 pr-4">
+                        <div class="text-[10px] font-bold text-stone-300 font-mono mb-1">#${displayNo}</div>
+                        <div class="text-sm font-bold text-stone-dark uppercase tracking-tight leading-tight">${guestName}</div>
+                    </div>
+                    <span class="${badgeClass} px-3 py-1 rounded-full text-[7px] font-bold text-white uppercase tracking-[0.2em]">
+                        ${item.status || 'REG'}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-1.5">
+                        <svg width="10" height="10" fill="currentColor" class="text-stone-300" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.767 5.767 0 3.18 2.586 5.766 5.767 5.766 3.18 0 5.766-2.586 5.766-5.766 0-3.181-2.586-5.767-5.766-5.767zm0 1.648c2.271 0 4.119 1.848 4.119 4.119 0 2.271-1.848 4.119-4.119 4.119-2.271 0-4.119-1.848-4.119-4.119 0-2.271 1.848-4.119 4.119-4.119zm0-5.82c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm0 18.352c-4.613 0-8.352-3.739-8.352-8.352s3.739-8.352 8.352-8.352 8.352 3.739 8.352 8.352-3.739 8.352-8.352 8.352z"/></svg>
+                        <span class="text-[10px] font-bold text-stone-green font-mono">${whatsapp}</span>
+                    </div>
+                    <div class="text-[8px] font-bold text-stone-300 uppercase tracking-widest">${time}</div>
+                </div>
+            `;
+            mobileList.appendChild(mobileDiv);
+        });
+    }
+
+    function filterData(query) {
+        const q = query.toLowerCase().trim();
+        const filtered = masterData.filter(item => 
+            (item.nama || "").toLowerCase().includes(q) || 
+            (item.wa || "").includes(q)
+        );
+        renderUI(filtered);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadRekap);
+</script>
+
+</body>
+</html>

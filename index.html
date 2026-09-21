@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id" data-page="invitation">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta charset="UTF-8">
+    <title>The Wedding of Fikri & Oca</title>
+
+    <meta property="og:title" content="THE WEDDING OF FIKRI & OCA">
+    <meta property="og:description" content="SABTU, 24 OKTOBER 2026">
+    
+    <meta property="og:image" content="https://wedding-fikri-oca.vercel.app/preview.jpg">
+    <meta property="og:image:secure_url" content="https://wedding-fikri-oca.vercel.app/preview.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://wedding-fikri-oca.vercel.app/">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script&family=Great+Vibes&family=Parisienne&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Pinyon+Script&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="loader-wrapper" class="fixed inset-0 z-[10001] bg-[#f4f1ee] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="relative flex items-center justify-center">
+        <!-- Lingkaran Loading -->
+        <div class="w-20 h-20 border-4 border-stone-200 border-t-[#4a5d4a] rounded-full animate-spin"></div>
+        
+        <!-- Logo Monogram -->
+        <img src="assets/logo.png" 
+             alt="Logo F & O" 
+             class="absolute w-12 h-12 object-contain"
+             onerror="this.style.display='none'; document.getElementById('alt-text').style.display='block';">
+        
+        <!-- Teks Cadangan jika Gambar Error -->
+        <span id="alt-text" class="absolute font-serif text-xs text-[#4a5d4a] font-bold hidden">F & O</span>
+    </div>
+    
+    <p class="mt-6 font-serif italic text-stone-500 text-xs tracking-[0.2em] animate-pulse">
+        Menyiapkan kebahagiaan...
+    </p>
+</div>
+
+    <div id="langContainer" class="fixed bottom-20 right-5 z-[10000] flex flex-col items-center gap-2">
+        <div id="langMenu" class="hidden flex-col gap-2 mb-2 animate-fade-in">
+            <button onclick="switchLang('id')" class="w-8 h-8 bg-white/90 rounded-full shadow-lg border border-stone-200 overflow-hidden flex items-center justify-center transition-transform active:scale-90">
+                <img src="https://flagcdn.com/w40/id.png" class="w-full h-full object-cover" alt="Indonesia">
+            </button>
+            <button onclick="switchLang('en')" class="w-8 h-8 bg-white/90 rounded-full shadow-lg border border-stone-200 overflow-hidden flex items-center justify-center transition-transform active:scale-90">
+                <img src="https://flagcdn.com/w40/gb.png" class="w-full h-full object-cover" alt="English">
+            </button>
+        </div>
+   
+   <div class="fixed bottom-5 right-2 z-[10000] flex flex-col gap-3"></div>
+        
+        <!-- Tombol Bahasa Bulat (Versi Lebih Kecil) -->
+        <button onclick="toggleLanguage()" id="langBtn" 
+            class="w-9 h-9 bg-white/80 backdrop-blur-md border border-stone-200 rounded-full shadow-lg flex flex-col items-center justify-center group transition-all active:scale-95">
+            <span id="langText" class="text-[10px] font-bold tracking-tighter leading-none" style="color: #4a5d4a;">EN</span>
+            <span class="text-[6px] uppercase mt-0.5 tracking-tighter" style="color: #4a5d4a;" >Lang</span>
+        </button>
+    </div>
+
+           <!-- Tombol Musik Piringan Hitam (Tanpa Label Tengah) -->
+        <button id="musicButton" onclick="toggleMusic()" 
+            class="relative w-10 h-10 flex items-center justify-center transition-all active:scale-95 focus:outline-none">
+            
+            <div id="musicIcon" class="w-full h-full bg-[#0a0a0a] rounded-full shadow-2xl flex items-center justify-center animate-spin-slow relative overflow-hidden border border-black paused">
+                
+                <!-- Tekstur Alur Piringan (Garis halus melingkar) -->
+                <div class="absolute inset-0 rounded-full opacity-40" 
+                    style="background: repeating-radial-gradient(circle, #222, #222 0.5px, #000 1.5px);">
+                </div>
+                
+                <!-- Efek Pantulan Cahaya Glossy (Refleksi Conic) -->
+                <div class="absolute inset-0 rounded-full opacity-60" 
+                    style="background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3) 10%, transparent 20%, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%, transparent 80%, rgba(255,255,255,0.3) 90%, transparent);">
+                </div>
+                
+                <!-- Logo Langsung di Atas Vinyl (Tanpa Bulatan Warna) -->
+                <div class="z-10 flex items-center justify-center">
+                    <img src="assets/logo.png" alt="Logo" class="w-7 h-7 object-contain brightness-0 invert opacity-80" 
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="hidden text-[8px] font-bold text-white opacity-70">F&O</span>
+                </div>
+
+                <!-- Titik Lubang Kecil di Tengah Sempurna -->
+                <div class="absolute w-1 h-1 bg-black rounded-full border border-white/10 z-20"></div>
+            </div>
+        </button>
+
+     <audio id="weddingMusic" loop>
+        <source src="assets/musik.mp3" type="audio/mpeg">
+    </audio>
+
+        <div id="qrModal" onclick="closeQR()">
+        <div id="capture-area" class="qr-card" onclick="event.stopPropagation()">
+            <div class="qr-header">
+                <!-- Tambah ID: lang-qr-entry -->
+                <p id="lang-qr-entry" class="text-[10px] uppercase tracking-[0.2em] opacity-80">E-Invitation Entry Pass</p>
+                <h3 id="qr-couple-name" class="font-accent text-3xl mt-1">Fikri & Oca</h3>
+            </div>
+            
+            <div class="qr-body">
+                <h4 id="qr-guest-name" class="font-serif text-xl mb-4 text-stone-800 italic">Nama Tamu</h4>
+                
+                <!-- Tambah ID: lang-qr-brightness -->
+                <p id="lang-qr-brightness" class="text-[8px] text-center font-bold mb-3 uppercase tracking-widest animate-pulse">
+                    *Please increase your screen brightness for scanning
+                </p>
+
+                <div id="qrcode"></div>
+
+                <!-- Tambah ID: lang-qr-save -->
+                <button id="lang-qr-save" onclick="downloadQR()" class="mt-4 flex items-center gap-2 mx-auto px-4 py-2 bg-stone-100 border border-stone-200 rounded-full text-[10px] font-bold text-stone-600 uppercase tracking-widest transition-all active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Save QR To Gallery</span>
+                </button>
+
+                <!-- Tambah ID: lang-qr-instruction -->
+                <p id="lang-qr-instruction" class="mt-6 text-[11px] text-stone-500 text-center leading-relaxed">
+                    Please show this QR Code to the officer.
+                </p>
+            </div>
+            
+            <!-- Tambah ID: lang-qr-info -->
+            <div id="lang-qr-info" class="qr-footer">
+                October 24th, 2026 | Kotabaru, South Kalimantan
+            </div>
+            
+            <!-- Tambah ID: lang-qr-close -->
+            <button id="lang-qr-close" onclick="closeQR()" class="w-full py-3 bg-stone-200 text-stone-600 font-bold text-xs uppercase tracking-widest">Close</button>
+        </div>
+    </div>
+
+    <div id="wedding-cover">
+    <div class="absolute inset-0">
+        <img src="assets/IMG_6245.JPG.jpeg" alt="Cover" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
+    </div>
+
+    <div class="cover-content">
+        <div data-aos="fade-down" data-aos-delay="200">
+            <p id="lang-invitation-label" class="uppercase tracking-[0.3em] text-[10px] mb-2 opacity-80">Wedding Invitation</p>
+            
+            <h1 id="cover-couple-name" class="font-accent text-5xl mb-3">Fikri & Oca</h1>
+            </div>
+
+        <div data-aos="fade-up" data-aos-delay="400" class="mb-1">
+            <div class="mb-1">
+                <p id="lang-to" class="text-xs italic opacity-70 mb-2">To our dear guests:</p>
+                <h2 id="guest-name" class="text-2xl font-serif italic tracking-wide"></h2>
+            </div>
+            
+            <button id="btn-open" onclick="openInvitation()" class="btn-open uppercase text-sm">
+                Open Invitation
+            </button>
+            
+            <p id="lang-tap-to-enter" class="text-[9px] mt-4 opacity-50 tracking-widest uppercase">Tap to enter</p>
+        </div>
+    </div>
+</div>
+
+    <section class="p-0 m-0 relative overflow-hidden" style="height: 100dvh; width: 100%;">
+        <img src="assets/IMG_6244.JPG.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-70">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute left-0 w-full px-10 z-20" style="bottom: 160px;">
+            <div id="typing-effect" class="font-accent text-white text-3xl md:text-4xl leading-relaxed text-left drop-shadow-lg" style="font-family: 'Great Vibes', cursive;">
+                </div>
+        </div>
+
+            <div class="absolute bottom-20 left-0 w-full flex justify-center z-[30]">
+        <button id="lang-btn-qr" onclick="showQR()" class="btn-qr-aesthetic">
+            Your Invitation QR
+        </button>
+        </div>
+    </section>
+
+    <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 w-full h-full">
+            <img src="assets/IMG_6267.JPG.jpeg" alt="Background Ayat" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-black/30"></div>
+        </div>
+        <div class="relative z-10 max-w-md mx-auto text-center px-6" data-aos="fade-up">
+            <h2 class="font-serif text-3xl mb-6 italic text-white">QS. Ar-Rum: 21</h2>
+            <div class="w-12 h-[1px] bg-white/50 mx-auto mb-6"></div>
+            <p class="text-sm leading-relaxed text-white italic font-light tracking-wide">
+                "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya..."
+            </p>
+        </div>
+    </section>
+
+    
+   <section id="halaman-4" class="p-0 m-0 min-h-screen relative flex flex-col justify-end overflow-hidden bg-black">
+    <img src="assets/IMG_6271.JPG.jpeg" alt="Fikri & Oca" class="absolute inset-0 w-full h-full object-cover opacity-80 z-0">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-1"></div>
+
+        <div class="relative z-10 text-center mb-16" data-aos="fade-up">
+            <p id="lang-bride-groom" style="font-family: serif; color: white; opacity: 0.8; letter-spacing: 0.1em;">Groom & Bride</p>
+            <div class="w-8 h-[1px] bg-white/40 mx-auto mt-2"></div>
+        </div>
+
+    <!-- Bagian Mempelai Wanita -->
+    <div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; right: 10%;">
+        <div id="name-aisyah" class="text-white text-base md:text-2xl font-serif" 
+            style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+        </div>
+        
+        <!-- TEMPAT NAMA ORANG TUA WANITA -->
+    <div id="parents-aisyah-text" class="opacity-0 mt-5 text-white font-serif italic" style="font-size: 11px; line-height: 1.4; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); transition: opacity 1s ease;">
+            <span id="lang-parents-label-bride">Second Daughter of</span> <br> <span id="bride-parents-names">Bapak Musriyadi & Ibu Mahlinda</span>
+        </div>
+    </div>
+
+    <!-- Bagian Mempelai Pria -->
+    <div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; left: 8%;">
+        <div id="name-fadil" class="text-white text-base md:text-2xl font-serif" 
+            style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+        </div>
+
+        <!-- TEMPAT NAMA ORANG TUA PRIA -->
+        <div id="parents-fadil-text" class="opacity-0 mt-6 text-white font-serif italic" style="font-size: 11px; line-height: 1.4; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); transition: opacity 1s ease;">
+            <span id="lang-parents-label-groom">Second Son of</span> <br> <span id="groom-parents-names">Bapak Mulyadi & Ibu Jamilah</span>
+        </div>
+    </div>
+    </section>
+
+
+<section class="bg-portrait py-10">
+        <div class="absolute inset-0 z-0">
+            <img src="assets/IMG_6261.JPG.jpeg" alt="Background Portrait" class="w-full h-full object-cover opacity-90">
+            <div class="absolute inset-0 bg-black/30"></div>
+        </div>
+        <div class="relative z-10 max-w-md mx-auto px-4 w-full text-center" data-aos="fade-up">
+            <div class="mb-8">
+                <h2 id="lang-gallery-title" class="font-serif text-2xl glass-title">Potrait of Us</h2>
+            </div>
+            <div class="swiper swiper-main shadow-lg">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="assets/IMG_6244.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6271.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6253.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6269.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6247.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6254.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6243.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6246.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6268.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6249.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6251.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6255.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6265.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6266.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6248.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6252.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6257.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6259.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6270.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6030.JPG.jpeg"></div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+            <div class="swiper swiper-thumbs">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="assets/IMG_6244.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6271.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6253.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6269.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6247.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6254.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6243.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6246.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6268.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6249.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6251.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6255.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6265.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6266.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6248.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6252.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6257.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6259.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6270.JPG.jpeg"></div>
+                    <div class="swiper-slide"><img src="assets/IMG_6030.JPG.jpeg"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 w-full h-full">
+            <img src="assets/IMG_6269.JPG.jpeg" alt="Background Acara" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div class="relative z-10 max-w-md mx-auto px-6 py-12 w-full" data-aos="fade-up">
+            
+            <div class="text-center mb-10">
+                <h2 id="lang-save-date" class="font-accent text-5xl text-white mb-2">Save the Date</h2>
+                <p id="lang-main-date" class="font-serif italic text-white/90 text-lg mb-6">Saturday, 24 October 2026</p>
+                
+                <div id="countdown" class="flex justify-center gap-2">
+                    <div class="timer-box-trans"><span id="days" class="block font-bold text-xl">0</span><small id="lang-days" class="text-[9px] uppercase">Days</small></div>
+                    <div class="timer-box-trans"><span id="hours" class="block font-bold text-xl">0</span><small id="lang-hours" class="text-[9px] uppercase">Hours</small></div>
+                    <div class="timer-box-trans"><span id="minutes" class="block font-bold text-xl">0</span><small id="lang-mins" class="text-[9px] uppercase">minutes</small></div>
+                    <div class="timer-box-trans"><span id="seconds" class="block font-bold text-xl">0</span><small id="lang-secs" class="text-[9px] uppercase">seconds</small></div>
+                </div>
+
+                <div class="mt-8" data-aos="fade-up" data-aos-delay="200">
+                    <a id="gcal-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Pernikahan+Fikri+%26+Oca&dates=20261024T000000/20261024T235900&details=Mohon+doa+restu+atas+pernikahan+kami.+Terima+kasih.&location=Lontar+Timur+RT.03%2FRW.02+Pulau+Laut+Barat+Kotabaru&trp=true" 
+                    target="_blank" 
+                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/20 border border-white/40 text-white text-xs font-semibold tracking-wider hover:bg-white/40 transition-all backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <path d="M12 14v4"></path>
+                            <path d="M10 16h4"></path>
+                        </svg>
+                        <span id="lang-add-cal">Add To Calendar</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-6 text-white text-center">
+                <div class="border-b border-white/20 pb-4">
+                    <h3 id="lang-akad-title" class="font-serif text-xl mb-1 italic">Akad Nikah</h3>
+                    <p id="lang-akad-time" class="text-sm opacity-90">08.00 - 09.00 WITA</p>
+                </div>
+                
+                <div class="border-b border-white/20 pb-4">
+                    <h3 id="lang-reception-title" class="font-serif text-xl mb-1 italic">Wedding Reception</h3>
+                    <p id="lang-reception-time" class="text-sm opacity-90">09.00 WITA - Selesai</p>
+                </div>
+
+                <div class="pt-2">
+                    <p id="lang-location-label" class="text-xs italic mb-4 opacity-90 leading-relaxed">
+                        Event Location:<br>
+                        Kediaman Mempelai Wanita, Lontar Timur RT.03/RW.02, Pulau Laut Barat, Kab. Kotabaru
+                    </p>
+                    
+                    <div class="w-full h-[200px] rounded-2xl overflow-hidden shadow-inner border border-white/20 mb-6">
+                        <iframe id="maps-embed" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=Lontar%20Timur%20RT.03/RW.02%2C%20Pulau%20Laut%20Barat%2C%20Kabupaten%20Kotabaru%2C%20Kalimantan%20Selatan&z=15&output=embed"></iframe>
+                    </div>
+
+                    <a id="lang-btn-map" href="https://www.google.com/maps/search/?api=1&query=Lontar%20Timur%20RT.03/RW.02%2C%20Pulau%20Laut%20Barat%2C%20Kabupaten%20Kotabaru%2C%20Kalimantan%20Selatan" target="_blank" class="btn-primary inline-block text-sm bg-white !text-stone-800 shadow-xl px-8 py-3 rounded-full font-bold uppercase tracking-wider transition-all active:scale-95">
+                        OPEN GOOGLE MAPS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+            <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="assets/IMG_6266.JPG.jpeg" alt="Background Dresscode" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/50"></div>
+            </div>
+
+            <div class="relative z-10 w-full max-w-md px-6 text-center" data-aos="fade-up">
+                <div class="mb-6">
+                    <h2 id="lang-dresscode-title" class="font-accent text-4xl text-white mb-2">Dresscode</h2>
+                    <div class="w-12 h-[1px] bg-white/40 mx-auto mb-4"></div>
+                    <p id="lang-dresscode-desc" class="text-[10px] uppercase tracking-[0.2em] text-white/80 mb-6 italic">
+                        Your presence is our greatest gift, but if you'd like to match our theme, here is our color palette:
+                    </p>
+                </div>
+
+                <div class="glass-dresscode space-y-6">
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-romantic" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase">Romantic Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #DCAE96;"></span>
+                                <span class="text-[8px] opacity-70">Dusty Rose</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #A38F85;"></span>
+                                <span class="text-[8px] opacity-70">Mauve</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #D1D1D1;"></span>
+                                <span id="lang-color-silver" class="text-[8px] opacity-70">Silver</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-earthy" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Earthy Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #B2AC88;"></span>
+                                <span class="text-[8px] opacity-70">Sage</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #F5F5DC;"></span>
+                                <span class="text-[8px] opacity-70">Beige</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #E3DAC9;"></span>
+                                <span id="lang-color-cream" class="text-[8px] opacity-70">Cream</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-neutral" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Neutral Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #D2B48C;"></span>
+                                <span class="text-[8px] opacity-70">Tan</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #F2E7D5;"></span>
+                                <span class="text-[8px] opacity-70">Sand</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #FFFFFF;"></span>
+                                <span id="lang-color-white" class="text-[8px] opacity-70">White</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="lang-dresscode-note" class="text-[9px] italic text-white/60 tracking-wider" style="transform: translateY(-20px);">
+                    *This is only a recommendation, not an obligation.
+                </p>
+            </div>
+        </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="assets/IMG_6268.JPG.jpeg" alt="Background Memories" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md px-6 flex flex-col gap-6" data-aos="fade-up">
+            
+            <div class="glass-gift-card !w-full !max-w-none !p-6 text-center">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </div>
+                <h3 id="lang-filter-title" class="font-serif text-xl mb-2 tracking-wide text-white">Wedding Filter</h3>
+                <p id="lang-filter-desc" class="text-[9px] leading-relaxed mb-4 italic text-white/80 px-2">
+                    "Capture the love and share the joy through our lens. We've created a special filter for our special day."
+                </p>
+                <a id="instagram-filter-link" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MzE1NTM0MDY3Mjg2MTI0?igsh=MW1yNjJ4cDE1eGc4dQ==" target="_blank" 
+                class="inline-block w-full py-2.5 rounded-full bg-white text-stone-800 text-[10px] font-bold tracking-widest uppercase transition-all active:scale-95">
+                    <span id="lang-btn-filter">Use Wedding Filter</span>
+                </a>
+            </div>
+
+            <div class="glass-gift-card !w-full !max-w-none !p-6 text-center">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <h3 id="lang-share-title" class="font-serif text-xl mb-2 tracking-wide text-white">Sharing Memories</h3>
+                <p id="lang-share-desc" class="text-[9px] leading-relaxed mb-4 italic text-white/80 px-2">
+                    "Help us preserve these beautiful moments. Please share the photos and videos you captured during our celebration."
+                </p>
+                <a id="drive-upload-link" href="https://drive.google.com/drive/folders/1HzAW8lQavSHL23JPQ9fwnOC8eiRfVGze" target="_blank" 
+                class="inline-block w-full py-2.5 rounded-full bg-white text-stone-800 text-[10px] font-bold tracking-widest uppercase transition-all active:scale-95">
+                    <span id="lang-btn-share">Upload Your Memories</span>
+                </a>
+            </div>
+            <p id="memories-hashtag" class="text-[10px] opacity-70 text-center font-bold tracking-[0.2em] text-white mb-4">Dont' Forget To Tag Us and Use This #FikriAndOcaWedding</p>
+        </div>
+    </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="assets/IMG_6247.JPG.jpeg" alt="Background Wedding Gift" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+        <div class="text-center relative z-10" data-aos="zoom-in">
+            <h3 id="lang-gift-title" class="font-serif text-xl mb-3 tracking-wide text-white">Wedding Gift</h3>
+            
+            <p id="lang-gift-desc" class="text-[10px] leading-relaxed mb-6 italic opacity-90 px-2 text-white">
+                "Your present is truly the best gift, but if you'd like to send a little something, we provide a digital envelope to make it easier for you to share your blessings and love with us as we start our new journey together."
+            </p>
+
+            <div class="max-w-[280px] mx-auto text-left">
+                <div id="bank-accounts-container"></div>
+            </div>
+        </div>
+    </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="assets/IMG_6254.JPG.jpeg" alt="Background Send Wishes" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div class="relative z-10 max-w-md mx-auto px-8 py-12 w-full" data-aos="fade-up">
+            <div class="wishes-title-frame">
+                <span id="lang-wish-line1" class="line1">Send</span>
+                <span id="lang-wish-line2" class="line2">Your Wish</span>
+            </div>
+            <div class="space-y-4 mb-4 text-sm text-center">
+                <input type="text" id="name" placeholder="Name" class="input-wishes-glass">
+                <textarea id="wish" placeholder="Give your wish" class="input-wishes-glass h-28 resize-none"></textarea>
+            </div>
+            <div class="text-center pt-2">
+                <button id="lang-btn-send" onclick="addWish()" class="btn-send-glass sentencecase text-sm shadow-xl">
+                    Send
+                </button>
+            </div>
+            <div id="wishBox" class="mt-8 space-y-4 overflow-y-auto max-h-48 px-2"></div>
+        </div>
+    </section>
+
+    <section class="section-thankyou p-0 m-0 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="assets/IMG_6270.JPG.jpeg" alt="Thank You Background" class="w-full h-full object-cover">
+            <div class="absolute inset-0 thankyou-overlay"></div>
+        </div>
+        <div class="thankyou-wrapper" data-aos="fade-up">
+            <div class="thankyou-ornament">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 21s-7-4.35-9.5-8.5C.7 8.9 2.4 5 6 5c2 0 3.5 1.2 4.5 2.7C11.5 6.2 13 5 15 5c3.6 0 5.3 3.9 3.5 7.5C19 16.65 12 21 12 21z"/></svg>
+            </div>
+            <p id="lang-thankyou-title" class="thankyou-title">Terima Kasih</p>
+            <p id="thankyou-couple-name" class="thankyou-couple">Fikri &amp; Oca</p>
+            <p id="lang-thankyou-msg" class="thankyou-msg">
+                Atas segala doa, restu, dan kehadiran Bapak/Ibu/Saudara/i, kami mengucapkan terima kasih yang sebesar-besarnya. Semoga kebaikan ini kembali berlipat ganda untuk kita semua.
+            </p>
+            <div class="thankyou-divider"></div>
+        </div>
+    </section>
+
+    <footer class="wedding-footer py-8 text-center m-0">
+        <div class="footer-organizer">
+            <img src="assets/logo-sinar-ode.png" alt="Sinar Ode Wedding Organizer" class="footer-organizer-logo">
+            <p id="organizer-name" class="footer-organizer-name">Sinar Ode Organizer</p>
+
+            <div class="footer-social-row">
+                <a id="organizer-wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp Sinar Ode Organizer" class="footer-social-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.8 7.8L3 21l1.7-6.2A8.5 8.5 0 1 1 21 11.5Z"></path><path d="M8.5 10.5c.3 2.2 2.3 4.2 4.5 4.5"></path></svg>
+                </a>
+                <a id="organizer-ig" href="#" target="_blank" rel="noopener" aria-label="Instagram Sinar Ode Organizer" class="footer-social-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"></circle></svg>
+                </a>
+                <a id="organizer-tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok Sinar Ode Organizer" class="footer-social-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3v10.5a3.5 3.5 0 1 1-3-3.46"></path><path d="M15 3c.4 2.2 2 3.9 4 4.3"></path></svg>
+                </a>
+            </div>
+
+            <p id="organizer-copyright" class="footer-organizer-copyright">© 2026 Sinar Ode Organizer. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    
+
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

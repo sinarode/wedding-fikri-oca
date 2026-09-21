@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invitation Generator | Fikri & Oca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ⭐ Config terpusat: nama, tanggal, link API, background luar, dll -->
+    <script src="js/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            green: '#4a5d4a',
+                            light: '#f4f1ee',
+                            dark: '#1c1917',
+                            border: '#e0e2db'
+                        },
+                        gold: '#d4af37'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ee; color: #1c1917; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(74, 93, 74, 0.1); }
+        
+        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f4f1ee; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        textarea { 
+            background-color: #f9f8f6 !important; 
+            border: 1px solid #e5e7eb !important;
+            transition: all 0.2s ease;
+        }
+        textarea:focus { 
+            border-color: #4a5d4a !important; 
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.05);
+        }
+
+        .select-status {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5d4a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen p-4 md:p-10 flex flex-col items-center">
+
+<div class="w-full max-w-md">
+    <!-- Header -->
+    <header class="mb-8 flex justify-between items-end px-2">
+        <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-500 mb-1">Admin Tools</p>
+            <h1 class="font-serif text-3xl text-stone-green font-bold">Generator</h1>
+        </div>
+        <a href="rekap-generator.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 py-2.5 rounded-full shadow-sm border border-stone-border hover:shadow-md transition-all active:scale-95">
+            &#9782; Recap
+        </a>
+    </header>
+
+    <!-- Main Input Form -->
+    <main class="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-xl shadow-stone-green/5 mb-8">
+        <div class="space-y-6">
+            <div class="fade-up">
+                <label class="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3 ml-1">Guest List</label>
+                <textarea id="bulkNames" rows="8" placeholder="Enter guest names per line...&#10;Example:&#10;Mr. Junaidi&#10;Siska & Partner" 
+                    class="w-full px-5 py-4 rounded-3xl outline-none text-sm font-medium text-stone-dark resize-none custom-scrollbar shadow-inner"></textarea>
+                <div class="flex items-center gap-2 mt-3 ml-1">
+                    <div id="syncIndicator" class="w-1.5 h-1.5 bg-stone-400 rounded-full"></div>
+                    <p id="syncText" class="text-[9px] text-stone-400 font-medium leading-relaxed uppercase tracking-wider">Synchronizing data...</p>
+                </div>
+            </div>
+
+            <button onclick="processGeneration()" id="btnGenerate" class="w-full bg-stone-green text-white font-bold py-5 rounded-[1.5rem] shadow-xl shadow-stone-green/20 text-[11px] uppercase tracking-[0.2em] mt-4 hover:brightness-110 active:scale-[0.97] transition-all flex justify-center items-center gap-3">
+                Generate Invitation Links
+            </button>
+        </div>
+    </main>
+
+    <!-- Result Area -->
+    <section id="resultBox" class="hidden space-y-4">
+        <div class="flex justify-between items-center px-4 mb-2">
+            <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400">Generation Results</h3>
+        </div>
+        
+        <div id="bulkList" class="space-y-4">
+            <!-- Items injected here -->
+        </div>
+    </section>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-dark/95 text-white px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 transition-all transform translate-y-4 pointer-events-none z-50 shadow-2xl backdrop-blur-md"></div>
+
+<script>
+    // ⭐ Diambil dari js/config.js (WEDDING_CONFIG)
+    const scriptURL = WEDDING_CONFIG.integrations.guestApiUrl;
+    const baseUrl = WEDDING_CONFIG.site.baseUrl;
+    let generatedItems = [];
+    let existingNames = new Set(); 
+
+    async function fetchExistingData() {
+        try {
+            const response = await fetch(`${scriptURL}?type=get_list&v=${Date.now()}`);
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                existingNames = new Set(data.map(item => (item.nama || "").trim().toLowerCase()));
+                document.getElementById('syncIndicator').classList.replace('bg-stone-400', 'bg-green-500');
+                document.getElementById('syncText').innerText = "Data synchronized";
+            }
+        } catch (e) {
+            console.error("Initial sync failed:", e);
+            document.getElementById('syncText').innerText = "Failed to check duplicates";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchExistingData);
+
+    async function processGeneration() {
+        const bulkText = document.getElementById('bulkNames').value.trim();
+        if (!bulkText) return showToast("⚠️ Please enter a guest list");
+
+        const names = bulkText.split('\n').map(n => n.trim()).filter(n => n !== "");
+        const btn = document.getElementById('btnGenerate');
+        
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+        
+        generatedItems = names.map((name, index) => ({
+            id: index,
+            name: name,
+            status: 'Reguler',
+            wa: '' 
+        }));
+
+        renderBulkList();
+        
+        document.getElementById('resultBox').classList.remove('hidden');
+        document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        
+        btn.disabled = false;
+        btn.innerText = "Generate Invitation Links";
+        showToast(`✨ ${names.length} Names Loaded Successfully`);
+    }
+
+    function renderBulkList() {
+        const listContainer = document.getElementById('bulkList');
+        listContainer.innerHTML = '';
+
+        generatedItems.forEach((item) => {
+            const link = `${baseUrl}?to=${encodeURIComponent(item.name)}&s=${item.status}`;
+            const isAlreadySent = existingNames.has(item.name.toLowerCase());
+            
+            const card = document.createElement('div');
+            card.className = "glass-card rounded-[2rem] p-6 shadow-sm fade-up flex flex-col gap-4";
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1 pr-4">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Guest Name</p>
+                        <p class="text-sm font-bold text-stone-dark flex items-center gap-2">
+                            ${item.name}
+                            ${isAlreadySent ? '<span class="bg-red-100 text-red-600 text-[8px] px-2 py-0.5 rounded-full uppercase font-bold">Already Sent</span>' : ''}
+                        </p>
+                    </div>
+                    <div class="w-32 flex-shrink-0">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1 text-right">Category</p>
+                        <select onchange="updateItemStatus(${item.id}, this.value)" 
+                                class="select-status w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-1.5 text-[10px] font-bold text-stone-green outline-none cursor-pointer"
+                                ${isAlreadySent ? 'disabled' : ''}>
+                            <option value="Reguler" ${item.status === 'Reguler' ? 'selected' : ''}>Regular</option>
+                            <option value="VIP" ${item.status === 'VIP' ? 'selected' : ''}>VIP</option>
+                            <option value="VVIP" ${item.status === 'VVIP' ? 'selected' : ''}>VVIP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 border border-stone-100 p-3 rounded-xl">
+                    <p class="text-[8px] font-mono text-stone-400 truncate mb-1">${link}</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="handleAction('salin', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-white border border-stone-border text-stone-green py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-sm active:scale-95 transition-all">
+                            ${isAlreadySent ? 'Copy Again' : 'Copy Message'}
+                    </button>
+                    <button onclick="handleAction('wa', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-stone-green text-white py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-lg shadow-stone-green/10 active:scale-95 transition-all flex justify-center items-center gap-1.5">
+                        <span class="text-xs">💬</span> ${isAlreadySent ? 'Resend' : 'Send Invitation'}
+                    </button>
+                    <button onclick="handleAction('share', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-stone-dark text-white py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex justify-center items-center gap-1.5">
+                        <span class="text-xs">📸</span> Share IG
+                    </button>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    function updateItemStatus(id, newStatus) {
+        generatedItems[id].status = newStatus;
+        renderBulkList(); 
+        showToast(`Category ${generatedItems[id].name} -> ${newStatus}`);
+    }
+
+    async function handleAction(type, link, name, status) {
+        const isResend = existingNames.has(name.toLowerCase());
+        const message = getInvitationMessage(name, link);
+
+        if (type === 'salin') {
+            const el = document.createElement('textarea');
+            el.value = message;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast(isResend ? "📋 Message Copied Again" : "📋 Invitation Message Copied");
+        } else if (type === 'wa') {
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+            showToast(isResend ? "✨ Resending Invitation..." : "✨ Opening WhatsApp...");
+        } else if (type === 'share') {
+            if (navigator.share) {
+                navigator.share({
+                    title: `Wedding Invitation ${WEDDING_CONFIG.couple.nicknameShort}`,
+                    text: message
+                }).then(() => {
+                    showToast("📤 Share Menu Opened");
+                }).catch((err) => {
+                    console.log("Share cancelled:", err);
+                });
+            } else {
+                const el = document.createElement('textarea');
+                el.value = message;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                showToast("⚠️ Browser doesn't support share. Message copied!");
+            }
+        }
+
+        if (!isResend) {
+            await syncToSheets(name, status);
+        }
+    }
+
+    async function syncToSheets(name, status, wa = "Manual") {
+        const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(name)}&wa=${encodeURIComponent(wa)}&status=${status}`;
+        try {
+            await fetch(finalURL, { method: 'GET', mode: 'no-cors' });
+            existingNames.add(name.toLowerCase());
+            renderBulkList();
+        } catch (e) {
+            console.error("Failed to sync record:", e);
+        }
+    }
+
+    function getInvitationMessage(name, link) {
+        // ⭐ Nama pasangan & hashtag diambil otomatis dari js/config.js
+        const coupleName = WEDDING_CONFIG.couple.nicknameShort;
+        const hashtag = WEDDING_CONFIG.social.hashtag;
+        return `Assalamu'alaikum Warahmatullahi Wabarakatuh
+Kepada Yth. Bapak/Ibu/Saudara/i
+*${name}*
+
+____________
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami: 
+
+🕊️ THE WEDDING OF ${coupleName.toUpperCase()} 🕊️
+
+Kehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami. Silakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu: 
+${link} 
+
+Merupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami. 
+
+Terima kasih atas doa dan perhatiannya. 
+Wassalamu'alaikum Warahmatullahi Wabarakatuh
+
+Hormat kami, 
+${coupleName} 
+${hashtag} 
+
+_____________
+Spread your happiness with us`;
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.opacity = "1";
+        t.style.transform = "translate(-50%, 0)";
+        setTimeout(() => {
+            t.style.opacity = "0";
+            t.style.transform = "translate(-50%, 1rem)";
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>

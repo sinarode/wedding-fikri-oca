@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Dashboard | Fikri & Oca</title>
+
+    <meta property="og:title" content="Wedding Dashboard Fikri & Oca">
+    <meta property="og:description" content="Guest Management System for Fikri & Oca">
+    <meta property="og:image" content="assets/logo.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ⭐ Config terpusat: nama, tanggal, link API, background luar, dll -->
+    <script src="js/config.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --stone-green:#4a5d4a;
+            --stone-green-dark:#3a4a3a;
+            --cream:#f4f1ee;
+        }
+        body { font-family: 'Jost', sans-serif; background-color: var(--cream); overflow-x: hidden; letter-spacing: .01em; }
+        .font-serif { font-family: 'Fraunces', serif; font-optical-sizing: auto; }
+        .font-accent { font-family: 'Great Vibes', cursive; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(74, 93, 74, 0.10), 0 8px 10px -6px rgba(74, 93, 74, 0.08); }
+        .bg-stone-green { background-color: var(--stone-green); }
+        .text-stone-green { color: var(--stone-green); }
+        .border-stone-green { border-color: var(--stone-green); }
+
+        /* subtle textured backdrop like the invitation site */
+        .hero-texture{
+            background-image: radial-gradient(circle at 1px 1px, rgba(74,93,74,0.10) 1px, transparent 0);
+            background-size: 18px 18px;
+        }
+
+        .menu-card{
+            transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease, background-color .35s ease;
+        }
+        .menu-card:active{ transform: scale(.97); }
+        .menu-card:hover{ transform: translateY(-3px); background-color:#fff; }
+        .menu-icon{
+            transition: transform .35s cubic-bezier(.16,1,.3,1);
+        }
+        .menu-card:hover .menu-icon{ transform: scale(1.12) rotate(-4deg); }
+
+        .divider-ornament{
+            display:flex; align-items:center; justify-content:center; gap:.75rem;
+            color: var(--stone-green); opacity:.55; margin: 2.5rem 0 1.5rem;
+        }
+        .divider-ornament .line{ height:1px; width:40px; background: currentColor; opacity:.4; }
+
+        #fullOverlay {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(100%);
+            will-change: transform;
+        }
+        #fullOverlay.active { transform: translateX(0); }
+        #fullOverlay{ background-color: var(--cream); }
+
+        .iframe-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: -1;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(74, 93, 74, 0.1);
+            border-top-color: var(--stone-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar{ width:6px; }
+        ::-webkit-scrollbar-thumb{ background: rgba(74,93,74,.25); border-radius:10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen hero-texture">
+
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8" data-aos="fade-down">
+            <div>
+                <p class="text-[9px] uppercase tracking-[0.4em] text-stone-400 mb-1">Wedding Management</p>
+                <h1 class="font-serif text-3xl text-stone-green font-bold leading-tight">Admin Dashboard</h1>
+                <p class="font-accent text-2xl text-stone-green -mt-1">Fikri &amp; Oca</p>
+            </div>
+            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center card-shadow border border-stone-100 overflow-hidden shrink-0">
+                <img src="assets/logo.png" alt="FA" class="w-10 h-10 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="text-stone-green text-xl font-bold hidden">FA</span>
+            </div>
+        </header>
+
+        <!-- Ornament divider -->
+        <div class="divider-ornament">
+            <span class="line"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7-4.35-9.5-8.5C.7 8.9 2.4 5 6 5c2 0 3.5 1.2 4.5 2.7C11.5 6.2 13 5 15 5c3.6 0 5.3 3.9 3.5 7.5C19 16.65 12 21 12 21z"/></svg>
+            <span class="line"></span>
+        </div>
+
+        <!-- Main Menu -->
+        <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Main Menu</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8" data-aos="fade-up" data-aos-delay="150">
+
+            <button onclick="openFullPage('generator.html')" class="menu-card group bg-white/90 p-6 rounded-[2rem] text-stone-green flex items-center justify-between card-shadow border border-stone-100">
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-widest text-stone-400 mb-1">Invitation</p>
+                    <h3 class="font-serif text-lg leading-tight">Link Generator</h3>
+                </div>
+                <div class="menu-icon w-12 h-12 bg-stone-green/10 rounded-full flex items-center justify-center text-xl shrink-0">✍️</div>
+            </button>
+
+            <button onclick="openFullPage('wish-gallery.html')" class="menu-card group bg-white/90 p-6 rounded-[2rem] text-stone-green flex items-center justify-between card-shadow border border-stone-100">
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-widest text-stone-400 mb-1">Guest Sentiments</p>
+                    <h3 class="font-serif text-lg leading-tight">Wishes Gallery</h3>
+                </div>
+                <div class="menu-icon w-12 h-12 bg-stone-green/10 rounded-full flex items-center justify-center text-xl shrink-0">✨</div>
+            </button>
+
+        </div>
+
+        <!-- Ornament divider -->
+        <div class="divider-ornament">
+            <span class="line"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7-4.35-9.5-8.5C.7 8.9 2.4 5 6 5c2 0 3.5 1.2 4.5 2.7C11.5 6.2 13 5 15 5c3.6 0 5.3 3.9 3.5 7.5C19 16.65 12 21 12 21z"/></svg>
+            <span class="line"></span>
+        </div>
+
+        <!-- External Link -->
+        <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Live Web</h2>
+        <div class="bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col md:flex-row items-center gap-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="w-16 h-16 bg-stone-green/5 rounded-full flex items-center justify-center text-3xl shrink-0">📱</div>
+            <div class="text-center md:text-left flex-1">
+                <h3 class="font-serif text-2xl text-stone-green mb-1 font-bold">Main Invitation</h3>
+                <p class="text-xs text-stone-400 mb-4">Direct access to the public wedding invitation page.</p>
+                <a href="index.html" target="_blank" class="inline-block bg-stone-green text-white text-[10px] font-bold uppercase tracking-widest px-10 py-3 rounded-full shadow-lg transition-transform active:scale-95">Open Invitation Page</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FULL PAGE OVERLAY -->
+    <div id="fullOverlay" class="fixed inset-0 z-[100] flex flex-col">
+        <div class="bg-white px-5 py-4 relative flex items-center border-b border-stone-200 card-shadow z-10">
+            <button onclick="closeFullPage()" class="relative z-20 text-stone-green text-[10px] font-bold flex items-center gap-2 uppercase tracking-widest active:scale-95">
+                <span class="text-lg">←</span> BACK
+            </button>
+            <div class="absolute inset-x-0 text-center pointer-events-none">
+                <span id="overlayTitle" class="text-[10px] font-bold uppercase tracking-widest text-stone-400">MENU</span>
+            </div>
+        </div>
+
+        <div class="iframe-loader">
+            <div class="spinner"></div>
+            <p class="text-[10px] text-stone-400 uppercase tracking-widest mt-4">Loading Content...</p>
+        </div>
+
+        <iframe id="pageFrame" src="" class="w-full flex-grow border-none bg-transparent opacity-0 transition-opacity duration-300"></iframe>
+    </div>
+
+    <footer class="mt-16 mb-10 text-center text-stone-400 text-[10px] uppercase tracking-[0.4em] leading-loose">
+       #FikriAndOcaWedding<br>
+       &copy; Powered by Sinar Ode Organizer
+    </footer>
+
+    <script>
+        const overlay = document.getElementById('fullOverlay');
+        const iframe = document.getElementById('pageFrame');
+        const titleText = document.getElementById('overlayTitle');
+
+        function openFullPage(url) {
+            if(url.includes('generator')) titleText.innerText = "Invitation Generator";
+            else if(url.includes('wish-gallery')) titleText.innerText = "Wishes Gallery";
+            else titleText.innerText = "System Menu";
+
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                iframe.style.opacity = '0';
+                iframe.src = url;
+            }, 100);
+        }
+
+        iframe.onload = function() {
+            iframe.style.opacity = '1';
+        };
+
+        function closeFullPage() {
+            overlay.classList.remove('active');
+            iframe.style.opacity = '0';
+            setTimeout(() => {
+                iframe.src = "";
+            }, 300);
+            document.body.style.overflow = 'auto';
+            updateQuickStats();
+        }
+
+        // ⭐ Diambil dari js/config.js (WEDDING_CONFIG.integrations.guestApiUrl)
+        const scriptURL = WEDDING_CONFIG.integrations.guestApiUrl;
+
+        async function updateQuickStats() {
+            try {
+                const [resTamu, resAbsen] = await Promise.all([
+                    fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`),
+                    fetch(`${scriptURL}?type=get_absen&v=${Date.now()}`)
+                ]);
+
+                const listTamu = await resTamu.json();
+                const listAbsen = await resAbsen.json();
+
+                document.getElementById('totalTamu').innerText = listTamu.length;
+                document.getElementById('totalHadir').innerText = listAbsen.length;
+            } catch (e) {
+                console.error("Stats sync failed:", e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic' });
+            updateQuickStats();
+        });
+    </script>
+</body>
+</html>

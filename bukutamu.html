@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Guest Book | Fikri & Oca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ⭐ Config terpusat: nama, tanggal, link API, background luar, dll -->
+    <script src="js/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --stone-green: #4a5d4a; --stone-light: #f4f1ee; --stone-dark: #1c1917; --gold: #d4af37; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--stone-light); color: var(--stone-dark); }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(74, 93, 74, 0.1); }
+        #searchInput { -webkit-appearance: none; appearance: none; transition: all 0.3s ease; }
+        #searchInput:focus { box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.1); }
+        .badge-vvip { background-color: #7e7e7e; color: white; }
+        .badge-vip { background-color: var(--gold); color: white; }
+        .badge-reg { background-color: var(--stone-green); color: white; }
+        .fade-up { animation: fadeUp 0.5s ease-out forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--stone-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(74, 93, 74, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .fab:active { transform: scale(0.9) rotate(90deg); }
+
+        /* Modal Aesthetic Upgrades */
+        #manualModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(28, 25, 23, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .input-manual {
+            background-color: #f9f8f6;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .input-manual:focus {
+            background-color: #ffffff;
+            border-color: var(--stone-green);
+            box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.05);
+        }
+
+        .cat-btn {
+            padding: 12px;
+            border-radius: 1rem;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .cat-btn.active-reg { background-color: var(--stone-green); color: white; border-color: var(--stone-green); }
+        .cat-btn.active-vip { background-color: var(--gold); color: white; border-color: var(--gold); }
+        .cat-btn.inactive { background-color: #f3f4f6; color: #9ca3af; border-color: #f3f4f6; }
+    </style>
+</head>
+<body class="p-4 md:p-10 flex flex-col items-center min-h-screen pb-20">
+
+    <div class="w-full max-w-md fade-up">
+        <!-- Header -->
+        <header class="flex flex-col items-center gap-6 mb-8 px-2">
+            <div class="w-full flex justify-between items-center">
+                <a href="scanner.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-2.5 rounded-full shadow-sm border border-stone-200 hover:shadow-md transition-all active:scale-95">
+                    <span class="text-xs">←</span> Scanner
+                </a>
+
+                <a href="rekap.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-2.5 rounded-full shadow-sm border border-stone-200 hover:shadow-md transition-all active:scale-95">
+                    Attendance<br> Summary <span class="text-xs">→</span>
+                </a>
+            </div>
+
+            <div class="text-center">
+                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Receptionist Tools</p>
+                <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Guest Book</h1>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="glass-card rounded-[2.5rem] p-6 shadow-xl shadow-stone-green/5 mb-8">
+            <div class="relative">
+                <input type="text" id="searchInput" oninput="filterTamu(this.value)" placeholder="Enter guest name here..." 
+                       class="w-full pl-12 pr-4 py-4 rounded-3xl bg-stone-light border border-stone-200 outline-none text-sm font-medium">
+                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-stone-400">🔍</div>
+            </div>
+            <div id="resultCount" class="mt-4 text-[9px] font-bold text-stone-400 uppercase tracking-widest text-center">
+                Syncing database...
+            </div>
+        </div>
+
+        <div id="guestList" class="space-y-4">
+            <div class="flex flex-col items-center py-20 opacity-30">
+                <div class="w-8 h-8 border-2 border-stone-green border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Loading Database...</p>
+            </div>
+        </div>
+
+        <div id="emptySearch" class="hidden text-center py-12 px-6 glass-card rounded-[2.5rem] border-dashed border-2 border-stone-200">
+            <div class="text-3xl mb-3">📖</div>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6 leading-relaxed">Name not found.<br>Register as new guest?</p>
+            <button onclick="openModal()" id="btnTambah" class="bg-stone-green text-[#4a5d4a] px-10 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-stone-green/20 active:scale-95 transition-all">
+                ADD NEW GUEST
+            </button>
+        </div>
+    </div>
+
+    <div class="fab" onclick="openModal()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+        </svg>
+    </div>
+
+    <div id="manualModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-stone-light rounded-full mb-4 text-[#4a5d4a]">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
+                <h2 class="font-serif text-2xl text-[#4a5d4a] font-bold">Manual Entry</h2>
+                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-2">Register Guest On-Site</p>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[9px] font-bold text-stone-400 uppercase tracking-widest ml-1 mb-2 block">Full Name</label>
+                    <input type="text" id="manualName" placeholder="Type guest name..." 
+                           class="w-full px-5 py-4 rounded-2xl input-manual outline-none text-sm font-medium">
+                </div>
+
+                <div>
+                    <label class="text-[9px] font-bold text-stone-400 uppercase tracking-widest ml-1 mb-2 block">Select Category</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="setManualCat('Reguler')" id="catReg" class="cat-btn active-reg">Regular</button>
+                        <button onclick="setManualCat('VIP')" id="catVip" class="cat-btn inactive">VIP</button>
+                    </div>
+                </div>
+
+                <div class="pt-4 space-y-3">
+                    <button onclick="submitManual()" id="submitBtn" class="w-full bg-stone-green text-[#4a5d4a] py-4 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-stone-green/20 active:scale-95 transition-all">
+                        Submit
+                    </button>
+                    <button onclick="closeModal()" class="w-full py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast UI Updated per previous requirement: longer and lower -->
+    <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-stone-dark/95 text-[#4a5d4a] px-12 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 transition-all transform translate-y-4 pointer-events-none z-50 shadow-2xl backdrop-blur-md text-center"></div>
+
+    <script>
+        // ⭐ Diambil dari js/config.js (WEDDING_CONFIG.integrations.guestApiUrl)
+        const scriptURL = WEDDING_CONFIG.integrations.guestApiUrl;
+        const STATUS_KEY = 'bukutamu_local_status';
+        let allTamu = [];
+        let localStatus = JSON.parse(localStorage.getItem(STATUS_KEY)) || {};
+        let selectedCat = 'Reguler';
+
+        async function loadTamu() {
+            try {
+                const [resMaster, resAbsen] = await Promise.all([
+                    fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`),
+                    fetch(`${scriptURL}?type=get_absen&v=${Date.now()}`)
+                ]);
+                allTamu = await resMaster.json();
+                const dataAbsen = await resAbsen.json();
+                dataAbsen.forEach(item => {
+                    const key = (item.nama || "").toLowerCase().trim();
+                    if (key) localStatus[key] = true;
+                });
+                localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus));
+                renderTamu(allTamu);
+                updateResultCount();
+            } catch (error) { 
+                console.error("Sync failed:", error); 
+                showToast("Sync Failed"); 
+            }
+        }
+
+        function renderTamu(data) {
+            const container = document.getElementById('guestList');
+            container.innerHTML = '';
+            data.forEach(tamu => {
+                const key = tamu.nama.toLowerCase().trim();
+                const isHadir = localStatus[key] === true;
+                let badgeClass = 'badge-reg';
+                if (tamu.status.includes('VVIP')) badgeClass = 'badge-vvip';
+                else if (tamu.status.includes('VIP')) badgeClass = 'badge-vip';
+                const card = document.createElement('div');
+                card.className = "guest-card glass-card rounded-[2rem] p-6 flex justify-between items-center transition-all duration-300";
+                if(isHadir) card.classList.add('opacity-60', 'grayscale');
+                card.innerHTML = `
+                    <div class="flex-1 pr-4">
+                        <div class="flex items-center gap-2 mb-1"><span class="${badgeClass} px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">${tamu.status}</span></div>
+                        <h3 class="text-sm font-bold text-stone-dark uppercase tracking-tight">${tamu.nama}</h3>
+                    </div>
+                    <button onclick="markHadir('${escHtml(tamu.nama)}', '${tamu.status}')" 
+                            class="flex-shrink-0 min-w-[100px] py-3 px-4 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 
+                            ${isHadir ? 'bg-stone-100 text-stone-400 cursor-not-allowed' : 'bg-white text-stone-green border border-stone-green hover:bg-stone-50'}">
+                        ${isHadir ? 'PRESENT' : 'CHECK-IN'}
+                    </button>`;
+                container.appendChild(card);
+            });
+        }
+
+        // Fungsi mencatat kehadiran ke Rekap (Dipercepat)
+        function markHadir(nama, status) {
+            const key = nama.toLowerCase().trim();
+            if (localStatus[key]) return;
+            
+            // Instantly update UI (Optimistic)
+            localStatus[key] = true;
+            localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus));
+            renderTamu(allTamu);
+            showToast(`${nama} Checked-in`);
+            
+            // Background sync (No await so UI isn't blocked)
+            fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}&kode=MANUAL`, { method: 'GET', mode: 'no-cors' })
+                .catch(e => console.error("Sync failed in background"));
+            
+            localStorage.removeItem('rekap_tamu'); 
+        }
+
+        function filterTamu(query) {
+            query = query.toLowerCase().trim();
+            const cards = document.querySelectorAll('.guest-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                if (name.includes(query)) { card.classList.remove('hidden'); visible++; } else { card.classList.add('hidden'); }
+            });
+            document.getElementById('emptySearch').classList.toggle('hidden', visible > 0 || !query);
+            updateResultCount(query ? visible : null);
+        }
+
+        function openModal() {
+            document.getElementById('manualModal').style.display = 'flex';
+            const searchVal = document.getElementById('searchInput').value;
+            if(searchVal) document.getElementById('manualName').value = searchVal;
+            document.getElementById('manualName').focus();
+        }
+
+        function closeModal() { document.getElementById('manualModal').style.display = 'none'; }
+
+        function setManualCat(cat) {
+            selectedCat = cat;
+            const reg = document.getElementById('catReg');
+            const vip = document.getElementById('catVip');
+            if(cat === 'Reguler') {
+                reg.className = "cat-btn active-reg";
+                vip.className = "cat-btn inactive";
+            } else {
+                vip.className = "cat-btn active-vip";
+                reg.className = "cat-btn inactive";
+            }
+        }
+
+        // FUNGSI UTAMA DIOPTIMALKAN: Instant UI feedback + Background Sync
+        function submitManual() {
+            const nama = document.getElementById('manualName').value.trim();
+            if(!nama) return showToast("Please enter guest name");
+            
+            const key = nama.toLowerCase().trim();
+            const currentCat = selectedCat;
+
+            // 1. Update UI Instantly (Optimistic)
+            localStatus[key] = true;
+            localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus));
+            
+            // Tambahkan ke array lokal jika belum ada
+            const alreadyExists = allTamu.some(t => t.nama.toLowerCase().trim() === key);
+            if (!alreadyExists) {
+                allTamu.unshift({ nama: nama, status: currentCat });
+            }
+
+            // Refleksikan ke layar segera
+            renderTamu(allTamu);
+            closeModal();
+            document.getElementById('searchInput').value = '';
+            filterTamu('');
+            showToast(`Success! ${nama} check-in & registered`);
+
+            // 2. Background Sync (Parallel) - User tidak perlu menunggu
+            Promise.all([
+                fetch(`${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(currentCat)}&wa=Manual`, { method: 'GET', mode: 'no-cors' }),
+                fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(currentCat)}&kode=Manual`, { method: 'GET', mode: 'no-cors' })
+            ]).catch(e => console.error("Background sync failed"));
+            
+            localStorage.removeItem('rekap_tamu'); 
+        }
+
+        function updateResultCount(count) {
+            document.getElementById('resultCount').textContent = count != null ? `${count} Guest(s) Found` : `${allTamu.length} Registered Guests`;
+        }
+        function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.style.opacity = "1"; t.style.transform = "translate(-50%, 0)";
+            setTimeout(() => { t.style.opacity = "0"; t.style.transform = "translate(-50%, 1rem)"; }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', loadTamu);
+    </script>
+</body>
+</html>

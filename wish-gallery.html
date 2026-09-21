@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wishes Gallery | Fikri & Oca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ⭐ Config terpusat: nama, tanggal, link API, background luar, dll -->
+    <script src="js/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            green: '#4a5d4a',
+                            light: '#f4f1ee',
+                            dark: '#1c1917',
+                            border: '#e0e2db'
+                        },
+                        gold: '#d4af37'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ee; color: #1c1917; -webkit-tap-highlight-color: transparent; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .custom-shadow { box-shadow: 0 10px 40px -10px rgba(74, 93, 74, 0.1); }
+        
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wish-columns {
+            column-count: 1;
+            column-gap: 1.25rem;
+        }
+        @media (min-width: 640px) { .wish-columns { column-count: 2; } }
+        @media (min-width: 1024px) { .wish-columns { column-count: 3; } }
+        
+        .wish-item {
+            break-inside: avoid;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+
+        .loading-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .quote-mark {
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+            opacity: 0.1;
+            font-size: 6rem;
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen py-8 px-4 md:py-16">
+
+<div class="max-w-6xl mx-auto fade-in">
+    <!-- Header -->
+    <header class="flex flex-col items-center mb-10 text-center">
+        <p class="text-[9px] font-bold uppercase tracking-[0.5em] text-stone-400 mb-2">Guest Sentiments</p>
+        <h1 class="font-serif text-3xl md:text-5xl text-stone-green font-bold">Wishes & Prayers Gallery</h1>
+        <div class="h-0.5 w-12 bg-gold/30 my-4"></div>
+        <p class="text-[11px] text-stone-500 font-medium italic max-w-xs leading-relaxed">
+            A beautiful collection of messages and sincere prayers from your loved ones.
+        </p>
+        
+        <div class="mt-8">
+            <button onclick="fetchWishes()" id="refreshBtn" class="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-8 py-3.5 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95 group">
+                <svg id="refreshIcon" class="w-3.5 h-3.5 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Sync Gallery
+            </button>
+        </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-3 custom-shadow border border-white">
+            <div class="w-10 h-10 bg-transparent rounded-xl flex items-center justify-center text-xl">✨</div>
+            <div>
+                <p class="text-[8px] font-bold text-stone-400 uppercase tracking-widest">Total Wishes</p>
+                <h2 id="totalCount" class="text-xl font-serif text-stone-green font-bold">0</h2>
+            </div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-3 custom-shadow border border-white">
+            <div class="w-10 h-10 bg-transparent rounded-xl flex items-center justify-center text-xl">🕒</div>
+            <div>
+                <p class="text-[8px] font-bold text-stone-400 uppercase tracking-widest">Update</p>
+                <h2 id="lastUpdate" class="text-[10px] font-bold text-stone-dark">Now</h2>
+            </div>
+        </div>
+        <div class="flex col-span-2 md:col-span-1 glass-card rounded-2xl p-4 items-center gap-3 custom-shadow border border-white">
+            <div class="w-10 h-10 bg-transparent rounded-xl flex items-center justify-center text-xl">🕊️</div>
+            <p class="text-[9px] font-medium text-stone-500 italic">"Love is patient and kind."</p>
+        </div>
+    </div>
+
+    <!-- Gallery Container -->
+    <div id="loader" class="py-20 text-center">
+        <div class="inline-block w-8 h-8 border-3 border-stone-green/10 border-t-stone-green rounded-full loading-spin mb-4"></div>
+        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.3em]">Loading memories...</p>
+    </div>
+
+    <div id="wishContainer" class="wish-columns">
+        <!-- Cards injected via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden py-20 text-center glass-card rounded-[2.5rem] border-dashed border-2 border-stone-border">
+        <div class="text-4xl mb-4">✉️</div>
+        <h3 class="font-serif text-xl text-stone-green font-bold">No wishes yet</h3>
+        <p class="text-[10px] text-stone-400 mt-2 uppercase tracking-widest font-bold">Waiting for prayers and wishes from guests.</p>
+    </div>
+
+    <footer class="mt-16 text-center">
+        <p class="text-[10px] font-bold text-stone-300 uppercase tracking-[0.5em]">#AIfinallyFAundlove</p>
+    </footer>
+</div>
+
+<!-- Toast Notif -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-dark/95 text-white px-8 py-3 rounded-full text-[9px] font-bold uppercase tracking-widest opacity-0 transition-all transform translate-y-4 pointer-events-none z-50 shadow-2xl backdrop-blur-sm"></div>
+
+<script>
+    // ⭐ Diambil dari js/config.js (WEDDING_CONFIG.integrations.guestApiUrl)
+    // Catatan: ini sengaja memakai link yang sama seperti file aslimu.
+    // Kalau ucapan yang tampil di sini tidak sinkron dengan index.html,
+    // coba ganti ke WEDDING_CONFIG.integrations.wishesApiUrl di config.js.
+    const scriptURL = WEDDING_CONFIG.integrations.guestApiUrl;
+
+    async function fetchWishes() {
+        const loader = document.getElementById('loader');
+        const container = document.getElementById('wishContainer');
+        const emptyState = document.getElementById('emptyState');
+        const refreshIcon = document.getElementById('refreshIcon');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        refreshBtn.disabled = true;
+        refreshIcon.classList.add('loading-spin');
+        
+        try {
+            const response = await fetch(`${scriptURL}?type=get_wishes&v=${Date.now()}`);
+            const data = await response.json();
+
+            loader.style.display = 'none';
+            container.innerHTML = '';
+            
+            if (!data || data.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.getElementById('totalCount').innerText = "0";
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            document.getElementById('totalCount').innerText = data.length;
+            document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            data.forEach((wish, index) => {
+                const item = document.createElement('div');
+                item.className = "wish-item";
+                
+                const bgOptions = ['bg-white', 'bg-stone-light/40', 'bg-white'];
+                const bg = bgOptions[index % bgOptions.length];
+
+                item.innerHTML = `
+                    <div class="relative glass-card rounded-[2rem] p-6 custom-shadow border border-white transition-all duration-300 hover:bg-white">
+                        <div class="quote-mark">“</div>
+                        
+                        <div class="flex items-center gap-4 mb-4 relative z-10">
+                            <div class="w-10 h-10 bg-stone-green text-white rounded-full flex items-center justify-center font-serif text-lg font-bold shadow-md shadow-stone-green/20">
+                                ${wish.nama.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-[11px] font-bold text-stone-green uppercase tracking-wider truncate">${wish.nama}</h4>
+                                <p class="text-[8px] font-bold text-stone-300 uppercase tracking-widest">${wish.waktu || 'Recently'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <p class="text-sm leading-relaxed text-stone-dark italic font-medium">"${wish.pesan}"</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            showToast("Gallery successfully updated");
+
+        } catch (error) {
+            console.error(error);
+            showToast("Failed to sync data");
+        } finally {
+            refreshBtn.disabled = false;
+            refreshIcon.classList.remove('loading-spin');
+        }
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.opacity = "1";
+        t.style.transform = "translate(-50%, 0)";
+        setTimeout(() => {
+            t.style.opacity = "0";
+            t.style.transform = "translate(-50%, 1rem)";
+        }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchWishes);
+</script>
+
+</body>
+</html>
